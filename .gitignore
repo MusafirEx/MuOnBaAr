@@ -107,3 +107,19 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+# Local-only credentials and configuration
+.env
+.env.*
+!.env.example
+/Secrets/
+/Private/
+/LocalConfig/
+*.secrets.json
+*.secret.json
+*.private.json
+*.p12
+*.pfx
+*.pem
+*.key
+*.keystore
+*.jks
