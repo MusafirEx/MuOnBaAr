@@ -1,5 +1,9 @@
 {
-  "dependencies": {
+"testables": [
+  "com.musafirex.mcp2unity"
+], 
+"dependencies": {
+    "com.musafirex.mcp2unity": "https://github.com/MusafirEx/MCP2UNITY.git",
     "com.unity.collab-proxy": "2.12.4",
     "com.unity.feature.development": "1.0.1",
     "com.unity.textmeshpro": "3.0.7",
