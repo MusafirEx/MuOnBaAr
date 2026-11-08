@@ -10,6 +10,13 @@ namespace MuOnBaAr.Networking
         [SerializeField] private ActorDefinition actor;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private Renderer placeholderRenderer;
+        [SerializeField, Range(30f, 1080f)] private float turnSpeed = 540f;
+        [SerializeField, Range(-40f, -1f)] private float terminalFallSpeed = -30f;
+        [SerializeField, Range(-25f, -1f)] private float gravity = -19.62f;
+
+        private CharacterController characterController;
+        private RiderThirdPersonCamera localCamera;
+        private float verticalVelocity;
 
         [Networked] public int CurrentFormIndex { get; private set; }
         [Networked] public int Health { get; private set; }
@@ -43,28 +50,54 @@ namespace MuOnBaAr.Networking
                 NextChangeTick = initial.NextChangeTick;
             }
 
+            characterController = GetComponent<CharacterController>();
+            if (characterController == null)
+            {
+                Debug.LogError(
+                    "Prototype player prefab is missing CharacterController. " +
+                    "Run Tools > MuOnBaAr > Upgrade Existing Prototype Rider (Third Person).",
+                    this);
+            }
+
+            verticalVelocity = 0f;
             displayedFormIndex = -1;
             RefreshFormVisual();
+
+            if (Object.HasInputAuthority)
+                BindLocalCamera();
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (actor == null || !GetInput(out RiderNetworkInput input))
+            // Host owns collision and motion for this prototype.
+            // Do not replay non-networked CharacterController state on clients.
+            if (!Object.HasStateAuthority || actor == null ||
+                !GetInput(out RiderNetworkInput input))
                 return;
 
-            // Both State and Input Authority simulate their own movement.
-            // A NetworkTransform on the same root replicates motion to proxies.
             Vector2 move = Vector2.ClampMagnitude(input.Move, 1f);
-            if (actor.TryGetForm(CurrentFormIndex, out var currentForm))
+            if (characterController != null &&
+                actor.TryGetForm(CurrentFormIndex, out var currentForm))
             {
                 float speed = actor.MoveSpeed * currentForm.MovementMultiplier;
                 Vector3 direction = new Vector3(move.x, 0f, move.y);
-                transform.position += direction * (speed * Runner.DeltaTime);
-            }
 
-            // Only State Authority commits health, energy and form selection.
-            if (!Object.HasStateAuthority)
-                return;
+                if (characterController.isGrounded && verticalVelocity < 0f)
+                    verticalVelocity = -2f;
+
+                verticalVelocity = Mathf.Max(
+                    terminalFallSpeed, verticalVelocity + gravity * Runner.DeltaTime);
+
+                Vector3 velocity = direction * speed + Vector3.up * verticalVelocity;
+                characterController.Move(velocity * Runner.DeltaTime);
+
+                if (direction.sqrMagnitude > 0.0001f)
+                {
+                    Quaternion facing = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.RotateTowards(
+                        transform.rotation, facing, turnSpeed * Runner.DeltaTime);
+                }
+            }
 
             bool pressed = input.Buttons.WasPressed(
                 PreviousButtons, RiderInputButton.CycleForm);
@@ -98,6 +131,28 @@ namespace MuOnBaAr.Networking
         {
             if (actor != null && CurrentFormIndex != displayedFormIndex)
                 RefreshFormVisual();
+
+            if (Object != null && Object.HasInputAuthority && localCamera == null)
+                BindLocalCamera();
+        }
+
+        private void BindLocalCamera()
+        {
+            Camera camera = Camera.main;
+            if (camera == null)
+                return;
+
+            localCamera = camera.GetComponent<RiderThirdPersonCamera>();
+            if (localCamera == null)
+                localCamera = camera.gameObject.AddComponent<RiderThirdPersonCamera>();
+
+            localCamera.Bind(transform);
+        }
+
+        private void OnDestroy()
+        {
+            if (localCamera != null)
+                localCamera.Release(transform);
         }
 
         private void RefreshFormVisual()
