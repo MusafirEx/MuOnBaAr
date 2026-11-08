@@ -1,5 +1,19 @@
 {
   "dependencies": {
+    "com.musafirex.chr0-to-unity": {
+      "version": "https://github.com/MusafirEx/Bress2Unity.git?path=/Packages/com.musafirex.chr0-to-unity#main",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "7ffdbaff30bbba389bc2996ce702bdba81141ac8"
+    },
+    "com.musafirex.emd2unity": {
+      "version": "https://github.com/MusafirEx/EMD2Unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c4c58ebe34ce7f0cf7ce4e51862fc33e58d6e70a"
+    },
     "com.musafirex.mcp2unity": {
       "version": "https://github.com/MusafirEx/MCP2UNITY.git",
       "depth": 0,
@@ -66,6 +80,13 @@
     "com.unity.ide.vscode": {
       "version": "1.2.5",
       "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.mono-cecil": {
+      "version": "1.10.2",
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

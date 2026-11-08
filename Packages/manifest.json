@@ -1,11 +1,14 @@
 {
-"testables": [
-  "com.musafirex.mcp2unity"
-], 
-"dependencies": {
+  "testables": [
+    "com.musafirex.mcp2unity"
+  ],
+  "dependencies": {
+    "com.musafirex.chr0-to-unity": "https://github.com/MusafirEx/Bress2Unity.git?path=/Packages/com.musafirex.chr0-to-unity#main",
+    "com.musafirex.emd2unity": "https://github.com/MusafirEx/EMD2Unity.git",
     "com.musafirex.mcp2unity": "https://github.com/MusafirEx/MCP2UNITY.git",
     "com.unity.collab-proxy": "2.12.4",
     "com.unity.feature.development": "1.0.1",
+    "com.unity.nuget.mono-cecil": "1.10.2",
     "com.unity.textmeshpro": "3.0.7",
     "com.unity.timeline": "1.7.7",
     "com.unity.ugui": "1.0.0",
