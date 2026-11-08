@@ -118,7 +118,7 @@ namespace MuOnBaAr.Networking
             }
 
             // If there are no models yet, tint a placeholder to verify sync.
-            if (placeholderRenderer == null)
+            if (placeholderRenderer == null && spawnedVisual == null)
                 placeholderRenderer = GetComponentInChildren<Renderer>();
 
             if (placeholderRenderer != null)
