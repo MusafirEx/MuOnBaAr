@@ -21,9 +21,16 @@ namespace MuOnBaAr.Runtime
 
         private void Start()
         {
-            if (actor == null || !actor.Validate(out var error))
+            if (actor == null)
             {
-                Debug.LogWarning("Form preview needs a valid ActorDefinition: " + error, this);
+                Debug.LogWarning("Assign an ActorDefinition before starting the preview.", this);
+                enabled = false;
+                return;
+            }
+
+            if (!actor.Validate(out var error))
+            {
+                Debug.LogWarning("Invalid ActorDefinition: " + error, this);
                 enabled = false;
                 return;
             }
