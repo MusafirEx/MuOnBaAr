@@ -22,10 +22,15 @@ namespace MuOnBaAr.Networking
 
         public override void Spawned()
         {
-            if (actor == null || !actor.Validate(out var reason))
+            if (actor == null)
             {
-                Debug.LogError("NetworkRiderController requires valid actor data: " +
-                    (actor == null ? "ActorDefinition is missing." : reason), this);
+                Debug.LogError("NetworkRiderController requires an ActorDefinition.", this);
+                return;
+            }
+
+            if (!actor.Validate(out var reason))
+            {
+                Debug.LogError("NetworkRiderController requires valid actor data: " + reason, this);
                 return;
             }
 
