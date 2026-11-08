@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
+using MuOnBaAr.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -148,13 +149,25 @@ namespace MuOnBaAr.Networking
 
         public void OnInput(NetworkRunner networkRunner, NetworkInput input)
         {
-            Vector2 move = Vector2.zero;
-            if (Input.GetKey(KeyCode.W)) move.y += 1f;
-            if (Input.GetKey(KeyCode.S)) move.y -= 1f;
-            if (Input.GetKey(KeyCode.A)) move.x -= 1f;
-            if (Input.GetKey(KeyCode.D)) move.x += 1f;
+            // Unity's legacy Horizontal/Vertical axes support WASD and common
+            // gamepad left sticks. Camera-relative input is computed locally.
+            Vector2 move = new Vector2(
+                Input.GetAxisRaw("Horizontal"),
+                Input.GetAxisRaw("Vertical"));
 
-            var data = new RiderNetworkInput { Move = move.normalized };
+            Camera camera = Camera.main;
+            float yaw = camera != null ? camera.transform.eulerAngles.y : 0f;
+            if (camera != null)
+            {
+                RiderThirdPersonCamera follow = camera.GetComponent<RiderThirdPersonCamera>();
+                if (follow != null && follow.Target != null)
+                    yaw = follow.Yaw;
+            }
+
+            var data = new RiderNetworkInput
+            {
+                Move = RiderMovementMath.CameraRelativeToWorld(move, yaw)
+            };
             data.Buttons.Set(RiderInputButton.CycleForm, pendingFormChange);
             pendingFormChange = false;
             input.Set(data);
