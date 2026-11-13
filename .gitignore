@@ -123,3 +123,6 @@ InitTestScene*.unity*
 *.key
 *.keystore
 *.jks
+# Large local character assets (folder named chr at any depth)
+chr/
+chr.meta
