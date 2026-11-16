@@ -16,6 +16,11 @@ namespace MuOnBaAr.Runtime
         [SerializeField, Min(0)] private int xpAwardForKnockout = 100;
         [SerializeField, Min(1)] private int maxHealth = 100;
         [SerializeField, Min(0)] private int maxEnergy = 100;
+        [Header("Energy Gain On Successful Hit")]
+        [Tooltip("Energy restored to this attacker per opponent that actually loses HP " +
+            "from melee or projectile damage. Zero disables energy-on-hit. " +
+            "Works for Combo, Ability and 360-degree attacks; never exceeds Max Energy.")]
+        [SerializeField, Min(0)] private int energyGainOnHit = 5;
         [SerializeField, Min(0.01f)] private float moveSpeed = 5f;
         [SerializeField, Min(0)] private int startingFormIndex;
         [SerializeField] private FormDefinition[] forms = Array.Empty<FormDefinition>();
@@ -31,6 +36,7 @@ namespace MuOnBaAr.Runtime
         }
         public int MaxHealth => Mathf.Max(1, maxHealth);
         public int MaxEnergy => Mathf.Max(0, maxEnergy);
+        public int EnergyGainOnHit => Mathf.Max(0, energyGainOnHit);
         public float MoveSpeed => Mathf.Max(0.01f, moveSpeed);
         public int StartingFormIndex => startingFormIndex;
         public int FormCount => forms == null ? 0 : forms.Length;
@@ -89,6 +95,7 @@ namespace MuOnBaAr.Runtime
         {
             maxHealth = Mathf.Max(1, maxHealth);
             maxEnergy = Mathf.Max(0, maxEnergy);
+            energyGainOnHit = Mathf.Max(0, energyGainOnHit);
             moveSpeed = Mathf.Max(0.01f, moveSpeed);
             startingFormIndex = Mathf.Max(0, startingFormIndex);
             maxLevel = Mathf.Clamp(maxLevel, 1, 100);

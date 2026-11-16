@@ -2563,6 +2563,18 @@ namespace MuOnBaAr.Networking
             int damage = RiderCombatRules.CalculateDamage(baseDamage, multiplier);
             int before = target.Health;
             target.Health = Mathf.Max(0, before - damage);
+            // State Authority grants Energy to the attacker only after confirmed
+            // HP loss. One ApplyDamage = one target hit (including multi-target
+            // 360 melee and each projectile). Blocked, missed and zero-damage
+            // attacks cannot generate Energy.
+            int actualDamage = before - target.Health;
+            int energyBefore = Energy;
+            Energy = RiderCombatRules.RestoreEnergyOnSuccessfulHit(
+                Energy, actor.MaxEnergy, actor.EnergyGainOnHit, actualDamage);
+            if (Energy > energyBefore)
+                LogCombat("ENERGY_ON_HIT", "target=" + target.Object.Id +
+                    " gained=" + (Energy - energyBefore) + " energy=" + Energy +
+                    "/" + actor.MaxEnergy);
             LogCombat("HIT", "target=" + target.Object.Id + " damage=" +
                 (before - target.Health) + " hpAfter=" + target.Health);
             if (target.Health > 0 && before > target.Health &&

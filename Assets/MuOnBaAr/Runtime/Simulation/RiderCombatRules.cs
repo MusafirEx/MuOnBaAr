@@ -38,6 +38,21 @@ namespace MuOnBaAr.Runtime
             return Vector2.Angle(aim, planar) <= Mathf.Clamp(halfAngleDegrees, 0f, 180f);
         }
 
+        /// <summary>
+        /// Restore Energy only for real damage dealt to an opponent. Saturates
+        /// at Max Energy without overflowing when gain is very large.
+        /// </summary>
+        public static int RestoreEnergyOnSuccessfulHit(int currentEnergy,
+            int maxEnergy, int energyGain, int actualDamage)
+        {
+            int cappedMax = Mathf.Max(0, maxEnergy);
+            int current = Mathf.Clamp(currentEnergy, 0, cappedMax);
+            if (actualDamage <= 0 || energyGain <= 0 || current >= cappedMax)
+                return current;
+            int available = cappedMax - current;
+            return current + Mathf.Min(energyGain, available);
+        }
+
         public static int CalculateDamage(int baseDamage, float formMultiplier)
         {
             if (baseDamage <= 0 || formMultiplier <= 0f)
