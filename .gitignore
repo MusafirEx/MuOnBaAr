@@ -123,3 +123,8 @@ InitTestScene*.unity*
 *.key
 *.keystore
 *.jks
+/Assets/Effect
+/Assets/Model
+/Assets/Sound
+/Assets/Texture
+/Prototype

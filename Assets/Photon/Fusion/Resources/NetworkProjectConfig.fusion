@@ -1,10 +1,10 @@
 {
     "Version": 1,
     "TypeId": "NetworkProjectConfig",
-    "HubMode": 0,
+    "HubMode": 2,
     "PeerMode": 0,
     "LagCompensation": {
-        "Enabled": false,
+        "Enabled": true,
         "HitboxBufferLengthInMs": 200,
         "HitboxDefaultCapacity": 512,
         "CachedStaticCollidersSize": 64

@@ -1,0 +1,629 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a53264aaf1fff233c699e1542d48ee7, type: 3}
+  m_Name: AccelBoostForm
+  m_EditorClassIdentifier: 
+  formId: AccelBoostForm
+  requiredLevel: 1
+  displayName: Boost Form
+  movementMultiplier: 1.5
+  damageMultiplier: 1
+  jumpHeight: 1.5
+  canFly: 1
+  flySpeed: 4
+  maxFlyHeight: 10
+  flyHoldSeconds: 0.35
+  flyEnergyPerSecond: 5
+  changeEnergyCost: 0
+  changeLockSeconds: 0.4
+  formChangeStartSeconds: 1.216667
+  formChangeEndSeconds: 2.483333
+  formChangeStartBodyPartTimeline:
+  - bodyPartIndex: 0
+    timeSeconds: 0.4
+    active: 0
+  - bodyPartIndex: 1
+    timeSeconds: 0.4
+    active: 0
+  - bodyPartIndex: 2
+    timeSeconds: 0.4
+    active: 0
+  - bodyPartIndex: 26
+    timeSeconds: 0.4
+    active: 1
+  - bodyPartIndex: 27
+    timeSeconds: 0.4
+    active: 1
+  - bodyPartIndex: 28
+    timeSeconds: 0.4
+    active: 1
+  formChangeEndBodyPartTimeline:
+  - bodyPartIndex: 0
+    timeSeconds: 0
+    active: 0
+  - bodyPartIndex: 1
+    timeSeconds: 0
+    active: 0
+  - bodyPartIndex: 2
+    timeSeconds: 0
+    active: 0
+  - bodyPartIndex: 26
+    timeSeconds: 0
+    active: 1
+  - bodyPartIndex: 27
+    timeSeconds: 0
+    active: 1
+  - bodyPartIndex: 28
+    timeSeconds: 0
+    active: 1
+  - bodyPartIndex: 0
+    timeSeconds: 1.85
+    active: 1
+  - bodyPartIndex: 1
+    timeSeconds: 1.85
+    active: 1
+  - bodyPartIndex: 2
+    timeSeconds: 1.85
+    active: 1
+  - bodyPartIndex: 26
+    timeSeconds: 1.85
+    active: 0
+  - bodyPartIndex: 27
+    timeSeconds: 1.85
+    active: 0
+  - bodyPartIndex: 28
+    timeSeconds: 1.85
+    active: 0
+  restrictSourceForms: 0
+  acceptedSourceForms:
+  - {fileID: 11400000, guid: c201650fbf80478489c0a9a815c157ad, type: 2}
+  - {fileID: 11400000, guid: c0e1e6786c5b2244f8db0fbe5f0bd192, type: 2}
+  visualPrefab: {fileID: 7408210150604222337, guid: 940f65547085c2d4398d7559a8368c52, type: 3}
+  animatorController: {fileID: 9100000, guid: 21181692d4cf49646a36417a70e01e30, type: 2}
+  abilities:
+  - {fileID: 11400000, guid: 50789252ca8346b44b21d8b0ed68c4dc, type: 2}
+  comboAttacks:
+  - durationSeconds: 0.867
+    lookTarget: 1
+    chainInputStartNormalized: 0.5
+    chainTransitionNormalized: 0.85
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1}
+      startNormalized: 0
+      endNormalized: 0.43
+    forwardStepDistance: 1
+    stepStartNormalized: 0
+    stepEndNormalized: 0.258
+    usePhaseDurations: 1
+    startupSeconds: 0.35
+    activeSeconds: 0.05
+    recoverySeconds: 0.467
+    hitReaction: 1
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 3
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 0
+    baseDamage: 3
+    hitRange: 2.75
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline: []
+  - durationSeconds: 0.967
+    lookTarget: 1
+    chainInputStartNormalized: 0.62
+    chainTransitionNormalized: 0.86
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1}
+      startNormalized: 0
+      endNormalized: 0.4
+    forwardStepDistance: 1
+    stepStartNormalized: 0
+    stepEndNormalized: 0.36
+    usePhaseDurations: 1
+    startupSeconds: 0.3
+    activeSeconds: 0.15
+    recoverySeconds: 0.517
+    hitReaction: 2
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 3
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 5
+    hitRange: 2.75
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline: []
+  - durationSeconds: 2.067
+    lookTarget: 0
+    chainInputStartNormalized: 0.5
+    chainTransitionNormalized: 0.86
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1}
+      startNormalized: 0.19
+      endNormalized: 0.42
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.56666666
+    activeSeconds: 0.15
+    recoverySeconds: 1.3503333
+    hitReaction: 4
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 3
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 7
+    hitRange: 2.75
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline:
+    - bodyPartIndex: 0
+      timeSeconds: 0.36
+      active: 0
+    - bodyPartIndex: 1
+      timeSeconds: 0.36
+      active: 0
+    - bodyPartIndex: 2
+      timeSeconds: 0.36
+      active: 0
+    - bodyPartIndex: 26
+      timeSeconds: 0.36
+      active: 1
+    - bodyPartIndex: 27
+      timeSeconds: 0.36
+      active: 1
+    - bodyPartIndex: 28
+      timeSeconds: 0.36
+      active: 1
+    - bodyPartIndex: 0
+      timeSeconds: 1.7833333
+      active: 1
+    - bodyPartIndex: 1
+      timeSeconds: 1.7833333
+      active: 1
+    - bodyPartIndex: 2
+      timeSeconds: 1.7833333
+      active: 1
+    - bodyPartIndex: 26
+      timeSeconds: 1.7833333
+      active: 0
+    - bodyPartIndex: 27
+      timeSeconds: 1.7833333
+      active: 0
+    - bodyPartIndex: 28
+      timeSeconds: 1.7833333
+      active: 0
+    audioTimeline: []
+  - durationSeconds: 1.233
+    lookTarget: 0
+    chainInputStartNormalized: 0.5
+    chainTransitionNormalized: 0.86
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1}
+      startNormalized: 0.19
+      endNormalized: 0.42
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.25
+    activeSeconds: 0.15
+    recoverySeconds: 0.833
+    hitReaction: 2
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 3
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 5
+    hitRange: 2.75
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline: []
+  - durationSeconds: 1.15
+    lookTarget: 0
+    chainInputStartNormalized: 0.54
+    chainTransitionNormalized: 0.83
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1}
+      startNormalized: 0.29
+      endNormalized: 0.54
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.4
+    activeSeconds: 0.21666667
+    recoverySeconds: 0.5333333
+    hitReaction: 2
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 3
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 5
+    hitRange: 2.75
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline: []
+  - durationSeconds: 1.017
+    lookTarget: 0
+    chainInputStartNormalized: 0.44
+    chainTransitionNormalized: 0.82
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1}
+      startNormalized: 0.206
+      endNormalized: 0.525
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.25
+    activeSeconds: 0.16666667
+    recoverySeconds: 0.6003333
+    hitReaction: 2
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 2
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 5
+    hitRange: 2.75
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline: []
+  - durationSeconds: 2.15
+    lookTarget: 1
+    chainInputStartNormalized: 0.402
+    chainTransitionNormalized: 0.902
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1.5}
+      startNormalized: 0.216
+      endNormalized: 0.38
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.45
+    activeSeconds: 0.8666667
+    recoverySeconds: 0.8333333
+    hitReaction: 5
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 2
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 5
+    hitRange: 2.75
+    hitAreaMode: 1
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline:
+    - clip: {fileID: 8300000, guid: bbe8094e17e7ed7479d96aeaed29f4ab, type: 3}
+      startSeconds: 0
+      volume: 1
+      pitch: 1
+      spatialBlend: 0
+      socketPath: 
+      localOffset: {x: 0, y: 0, z: 0}
+      followSocket: 0
+      scalePitchWithCombatTime: 0
+  - durationSeconds: 2.783
+    lookTarget: 1
+    chainInputStartNormalized: 0.45
+    chainTransitionNormalized: 0.76
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 1.5}
+      startNormalized: 0.158
+      endNormalized: 0.45
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.45
+    activeSeconds: 1.4166667
+    recoverySeconds: 0.916333
+    hitReaction: 4
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 2
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 5
+    hitRange: 2.75
+    hitAreaMode: 1
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline:
+    - clip: {fileID: 8300000, guid: bbe8094e17e7ed7479d96aeaed29f4ab, type: 3}
+      startSeconds: 0
+      volume: 1
+      pitch: 1
+      spatialBlend: 0
+      socketPath: 
+      localOffset: {x: 0, y: 0, z: 0}
+      followSocket: 0
+      scalePitchWithCombatTime: 0
+  - durationSeconds: 3.233
+    lookTarget: 1
+    chainInputStartNormalized: 0.47
+    chainTransitionNormalized: 0.891
+    chainInputEndNormalized: 1
+    movementSteps:
+    - movement: {x: 0, y: 3}
+      startNormalized: 0.084
+      endNormalized: 0.482
+    - movement: {x: 0, y: -0.5}
+      startNormalized: 0.482
+      endNormalized: 0.891
+    forwardStepDistance: 0.5
+    stepStartNormalized: 0.11
+    stepEndNormalized: 0.37
+    usePhaseDurations: 1
+    startupSeconds: 0.51666665
+    activeSeconds: 1.65
+    recoverySeconds: 1.0663333
+    hitReaction: 5
+    stunDurationSeconds: 3
+    hitKnockbackDistance: 2
+    hitKnockbackSeconds: 1
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 1
+    baseDamage: 7
+    hitRange: 2.75
+    hitAreaMode: 1
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 12
+      lifetimeSeconds: 3
+      hitRadius: 0.35
+      spawnForward: 0.8
+      spawnOffset: {x: 0, y: 1, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline:
+    - clip: {fileID: 8300000, guid: bbe8094e17e7ed7479d96aeaed29f4ab, type: 3}
+      startSeconds: 0
+      volume: 1
+      pitch: 1
+      spatialBlend: 0
+      socketPath: 
+      localOffset: {x: 0, y: 0, z: 0}
+      followSocket: 0
+      scalePitchWithCombatTime: 0
+  collectedBodyParts:
+  - hierarchyPath: Armature/Y_null/X_j1/Z_j2/hip_j3/waist_j4/breast_j5/R_collar_j12/R_harm_j13/R_larm_j14/R_hand_j15/w_R_j160/ACL00_W00/GMOP_Acl00_rz3b0c0_a00_o00_0
+    meshName: GMOP_Acl00_rz3b0c0_a00_o00_0
+    defaultActive: 1
+  - hierarchyPath: Armature/Y_null/X_j1/Z_j2/hip_j3/waist_j4/breast_j5/R_collar_j12/R_harm_j13/R_larm_j14/R_hand_j15/w_R_j160/ACL00_W00/GMOP_Acl00_rz3b0c0_a01_o00_1
+    meshName: GMOP_Acl00_rz3b0c0_a01_o00_1
+    defaultActive: 1
+  - hierarchyPath: Armature/Y_null/X_j1/Z_j2/hip_j3/waist_j4/breast_j5/R_collar_j12/R_harm_j13/R_larm_j14/R_hand_j15/w_R_j160/ACL00_W00/GMOP_Acl00_rz3b0c0_a02_o00_2
+    meshName: GMOP_Acl00_rz3b0c0_a02_o00_2
+    defaultActive: 1
+  - hierarchyPath: body_00_0
+    meshName: body_00_0
+    defaultActive: 1
+  - hierarchyPath: leg_00_1
+    meshName: leg_00_1
+    defaultActive: 1
+  - hierarchyPath: L_HAND_00_2
+    meshName: L_HAND_00_2
+    defaultActive: 0
+  - hierarchyPath: L_HAND_01_3
+    meshName: L_HAND_01_3
+    defaultActive: 1
+  - hierarchyPath: R_HAND_00_4
+    meshName: R_HAND_00_4
+    defaultActive: 1
+  - hierarchyPath: R_HAND_01_5
+    meshName: R_HAND_01_5
+    defaultActive: 0
+  - hierarchyPath: body_00_6
+    meshName: body_00_6
+    defaultActive: 1
+  - hierarchyPath: armor_00_7
+    meshName: armor_00_7
+    defaultActive: 1
+  - hierarchyPath: shoulder_00_8
+    meshName: shoulder_00_8
+    defaultActive: 1
+  - hierarchyPath: leg_00_0_9
+    meshName: leg_00_0_9
+    defaultActive: 1
+  - hierarchyPath: leg_00_1_10
+    meshName: leg_00_1_10
+    defaultActive: 1
+  - hierarchyPath: foot_00_11
+    meshName: foot_00_11
+    defaultActive: 1
+  - hierarchyPath: belt_00_12
+    meshName: belt_00_12
+    defaultActive: 1
+  - hierarchyPath: L_HAND_00_13
+    meshName: L_HAND_00_13
+    defaultActive: 1
+  - hierarchyPath: L_HAND_01_14
+    meshName: L_HAND_01_14
+    defaultActive: 1
+  - hierarchyPath: R_HAND_00_15
+    meshName: R_HAND_00_15
+    defaultActive: 1
+  - hierarchyPath: R_HAND_01_16
+    meshName: R_HAND_01_16
+    defaultActive: 1
+  - hierarchyPath: armor_00_0_17
+    meshName: armor_00_0_17
+    defaultActive: 1
+  - hierarchyPath: armor_00_1_18
+    meshName: armor_00_1_18
+    defaultActive: 1
+  - hierarchyPath: belt_00_19
+    meshName: belt_00_19
+    defaultActive: 1
+  - hierarchyPath: buckle_00_0_20
+    meshName: buckle_00_0_20
+    defaultActive: 1
+  - hierarchyPath: buckle_00_1_21
+    meshName: buckle_00_1_21
+    defaultActive: 1
+  - hierarchyPath: memory_00_22
+    meshName: memory_00_22
+    defaultActive: 1
+  - hierarchyPath: Armature/Y_null/X_j1/Z_j2/hip_j3/waist_j4/breast_j5/L_collar_j8/L_harm_j9/L_larm_j10/L_hand_j11/w_L_j150/ACL00_W00
+      (1)/GMOP_Acl00_rz3b0c0_a00_o00_0
+    meshName: GMOP_Acl00_rz3b0c0_a00_o00_0
+    defaultActive: 0
+  - hierarchyPath: Armature/Y_null/X_j1/Z_j2/hip_j3/waist_j4/breast_j5/L_collar_j8/L_harm_j9/L_larm_j10/L_hand_j11/w_L_j150/ACL00_W00
+      (1)/GMOP_Acl00_rz3b0c0_a01_o00_1
+    meshName: GMOP_Acl00_rz3b0c0_a01_o00_1
+    defaultActive: 0
+  - hierarchyPath: Armature/Y_null/X_j1/Z_j2/hip_j3/waist_j4/breast_j5/L_collar_j8/L_harm_j9/L_larm_j10/L_hand_j11/w_L_j150/ACL00_W00
+      (1)/GMOP_Acl00_rz3b0c0_a02_o00_2
+    meshName: GMOP_Acl00_rz3b0c0_a02_o00_2
+    defaultActive: 0

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: PhotonAppSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 
-    AppIdFusion: 
+    AppIdRealtime: 1529460b-7e38-4a73-aeb9-f9fbd32eb42f
+    AppIdFusion: 299e63d0-0498-408e-8c95-0dba1d14710b
     AppIdQuantum: 
-    AppIdChat: 
-    AppIdVoice: 
+    AppIdChat: c2933bfd-2e62-4bb4-a762-e70e3307ad40
+    AppIdVoice: 7539545f-3be0-48d5-a889-21f23ee0cdc7
     AppIdVideo: 
     AppVersion: 
     UseNameServer: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
     EnableProtocolFallback: 1
     AuthMode: 2
     EnableLobbyStatistics: 0
-    NetworkLogging: 1
-    ClientLogging: 2
+    NetworkLogging: 0
+    ClientLogging: 0
     encryptionMode: 0
     emptyRoomTtl: 0

@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eda7f2fcab40fab6dbd0245b625f8c4c, type: 3}
+  m_Name: ClockUpTest
+  m_EditorClassIdentifier: 
+  abilityId: ClockUpTest
+  energyCost: 0
+  cooldownSeconds: 0
+  startupSeconds: 0
+  activeSeconds: 0
+  recoverySeconds: 3
+  baseDamage: 0
+  hitReaction: 2
+  stunDurationSeconds: 2
+  hitKnockbackDistance: 0
+  hitKnockbackSeconds: 0.25
+  animatorTrigger: 
+  lookTarget: 0
+  executionMode: 0
+  normalReleaseType: 0
+  maximumChargeSeconds: 3
+  chargeStartAnimationSeconds: 0.2
+  chargeThresholds: []
+  autoReleaseAtMax: 1
+  comboFollowUps: []
+  chainInputStartNormalized: 0.45
+  chainTransitionNormalized: 0.85
+  chainInputEndNormalized: 1
+  movementSteps: []
+  forwardStepDistance: 0
+  stepStartNormalized: 0
+  stepEndNormalized: 0
+  hitRange: 0.1
+  projectile:
+    enabled: 0
+    visualPrefab: {fileID: 0}
+    speed: 12
+    lifetimeSeconds: 3
+    hitRadius: 0.35
+    spawnForward: 0.8
+    spawnOffset: {x: 0, y: 1, z: 0}
+    spawnSocketPath: 
+    useSocketRotationForDirection: 0
+  vfxTimeline: []
+  audioTimeline: []
+  bodyPartTimeline: []
+  clockUpEnabled: 1
+  clockUpActivationDelaySeconds: 0
+  clockUpDurationSeconds: 10
+  clockUpOtherRiderScale: 0.1
+  clockUpCasterScale: 1
+  clockUpStartVfxPrefab: {fileID: 0}
+  clockUpActiveVfxPrefab: {fileID: 0}
+  clockUpEndVfxPrefab: {fileID: 0}
+  clockUpStartVfxSeconds: 0.7
+  clockUpEndVfxSeconds: 0.7
+  clockUpVfxOffset: {x: 0, y: 1, z: 0}
+  hookEnabled: 0
+  hookRange: 10
+  hookPullSpeed: 8
+  hookDurationSeconds: 1.5
+  hookStopDistance: 1.2
+  gravityPullEnabled: 0
+  gravityPullRadius: 6
+  gravityPullSpeed: 6
+  gravityPullDurationSeconds: 2
+  gravityPullStopDistance: 0.5
+  gravityPullCenterOffset: {x: 0, y: 0, z: 0}

@@ -8,6 +8,12 @@ namespace MuOnBaAr.Runtime
     public sealed class ActorDefinition : ScriptableObject
     {
         [SerializeField] private string actorId = "actor";
+        [Header("Character Portrait")]
+        [SerializeField] private Sprite characterIcon;
+        [Header("Level Progression")]
+        [SerializeField, Range(1, 100)] private int maxLevel = 30;
+        [SerializeField, Min(1)] private int baseXpToNextLevel = 100;
+        [SerializeField, Min(0)] private int xpAwardForKnockout = 100;
         [SerializeField, Min(1)] private int maxHealth = 100;
         [SerializeField, Min(0)] private int maxEnergy = 100;
         [SerializeField, Min(0.01f)] private float moveSpeed = 5f;
@@ -15,6 +21,14 @@ namespace MuOnBaAr.Runtime
         [SerializeField] private FormDefinition[] forms = Array.Empty<FormDefinition>();
 
         public string ActorId => actorId;
+        public Sprite CharacterIcon => characterIcon;
+        public int MaxLevel => Mathf.Clamp(maxLevel, 1, 100);
+        public int XpAwardForKnockout => Mathf.Max(0, xpAwardForKnockout);
+        public int ExperienceToNextLevel(int level)
+        {
+            return level >= MaxLevel ? 0 :
+                Mathf.Max(1, Mathf.Max(1, baseXpToNextLevel) * Mathf.Max(1, level));
+        }
         public int MaxHealth => Mathf.Max(1, maxHealth);
         public int MaxEnergy => Mathf.Max(0, maxEnergy);
         public float MoveSpeed => Mathf.Max(0.01f, moveSpeed);
@@ -45,6 +59,12 @@ namespace MuOnBaAr.Runtime
                 return false;
             }
 
+            if (TryGetForm(startingFormIndex, out var starting) &&
+                starting.RequiredLevel > 1)
+            {
+                reason = "Starting Form must have Required Level = 1.";
+                return false;
+            }
             var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < FormCount; i++)
             {
@@ -71,6 +91,9 @@ namespace MuOnBaAr.Runtime
             maxEnergy = Mathf.Max(0, maxEnergy);
             moveSpeed = Mathf.Max(0.01f, moveSpeed);
             startingFormIndex = Mathf.Max(0, startingFormIndex);
+            maxLevel = Mathf.Clamp(maxLevel, 1, 100);
+            baseXpToNextLevel = Mathf.Max(1, baseXpToNextLevel);
+            xpAwardForKnockout = Mathf.Max(0, xpAwardForKnockout);
         }
     }
 }

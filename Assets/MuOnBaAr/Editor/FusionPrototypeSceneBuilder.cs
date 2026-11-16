@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Fusion;
+using Fusion.Addons.SimpleKCC;
 using MuOnBaAr.Networking;
 using MuOnBaAr.Runtime;
 using UnityEditor;
@@ -128,14 +129,10 @@ namespace MuOnBaAr.Editor
         {
             var root = new GameObject("NetworkRiderPlayer");
             root.AddComponent<NetworkObject>();
-            root.AddComponent<NetworkTransform>();
-            CharacterController controller = root.AddComponent<CharacterController>();
-            controller.height = 2f;
-            controller.radius = 0.35f;
-            controller.center = Vector3.up;
-            controller.stepOffset = 0.35f;
-            controller.slopeLimit = 50f;
-            controller.skinWidth = 0.05f;
+            Rigidbody physicsBody = root.AddComponent<Rigidbody>();
+            physicsBody.isKinematic = true;
+            physicsBody.useGravity = false;
+            root.AddComponent<SimpleKCC>();
             var rider = root.AddComponent<NetworkRiderController>();
 
             var visuals = new GameObject("VisualRoot").transform;

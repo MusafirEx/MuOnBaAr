@@ -12,7 +12,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c4c58ebe34ce7f0cf7ce4e51862fc33e58d6e70a"
+      "hash": "9de6be489bcbd256b2f8eb1d59407c2e32624978"
     },
     "com.musafirex.mcp2unity": {
       "version": "https://github.com/MusafirEx/MCP2UNITY.git",
@@ -20,9 +20,45 @@
       "source": "git",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.2.1",
-        "com.unity.test-framework": "1.1.33"
+        "com.unity.test-framework": "1.1.33",
+        "com.unity.ugui": "1.0.0",
+        "com.unity.textmeshpro": "3.0.7"
       },
-      "hash": "2562f895f58ad12cb88f65a2876aec975a2609f6"
+      "hash": "d2b996f16afc34ced5ac2a31e30d26cb8f0d50d7"
+    },
+    "com.musafirex.webview2unity": {
+      "version": "https://github.com/MusafirEx/WEBView2Unity.git#0d69acf21aeff6928acd94a5a50d47eb22e2131f",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0d69acf21aeff6928acd94a5a50d47eb22e2131f"
+    },
+    "com.photonengine.fusion-fsm": {
+      "version": "https://github.com/Photon-Server/Photon-UPM.git#fusion/v2/fusion-fsm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e01b77c9cb2688602371160cc343454fb94796c6"
+    },
+    "com.photonengine.fusion-physics": {
+      "version": "https://github.com/Photon-Server/Photon-UPM.git#fusion/v2/fusion-physics",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "5fbc5031bdc2e2ced4be78a1739f95f6bc1c9ba9"
+    },
+    "com.photonengine.fusion-simple-kcc": {
+      "version": "https://github.com/Photon-Server/Photon-UPM.git#fusion/v2/fusion-simple-kcc",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "17309c85645335faf4430c138b634f20505ba4c4"
+    },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
     },
     "com.unity.collab-proxy": {
       "version": "2.12.4",

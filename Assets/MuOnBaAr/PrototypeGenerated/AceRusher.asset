@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eda7f2fcab40fab6dbd0245b625f8c4c, type: 3}
+  m_Name: AceRusher
+  m_EditorClassIdentifier: 
+  abilityId: AceRusher
+  energyCost: 0
+  cooldownSeconds: 1
+  startupSeconds: 0.32
+  activeSeconds: 0.28
+  recoverySeconds: 1.217
+  baseDamage: 10
+  hitReaction: 7
+  stunDurationSeconds: 5
+  hitKnockbackDistance: 2
+  hitKnockbackSeconds: 0.25
+  animatorTrigger: Skill0
+  lookTarget: 1
+  executionMode: 0
+  normalReleaseType: 2
+  maximumChargeSeconds: 3
+  chargeStartAnimationSeconds: 0.2
+  chargeThresholds:
+  - minimumChargeSeconds: 0
+    releaseType: 0
+    hitReaction: 2
+    stunDurationSeconds: 2
+    hitKnockbackDistance: 0
+    hitKnockbackSeconds: 0.25
+    damageMultiplier: 0
+    useCustomDamage: 0
+    customDamage: 0
+    meleeRange: 0
+    projectiles: []
+    movementSteps: []
+    vfxTimeline: []
+    audioTimeline: []
+  autoReleaseAtMax: 0
+  comboFollowUps:
+  - durationSeconds: 0
+    lookTarget: 0
+    chainInputStartNormalized: 0
+    chainTransitionNormalized: 0
+    chainInputEndNormalized: 0
+    movementSteps: []
+    forwardStepDistance: 0
+    stepStartNormalized: 0
+    stepEndNormalized: 0
+    usePhaseDurations: 0
+    startupSeconds: 0
+    activeSeconds: 0
+    recoverySeconds: 0
+    hitReaction: 2
+    stunDurationSeconds: 2
+    hitKnockbackDistance: 0
+    hitKnockbackSeconds: 0.25
+    energyCost: 0
+    cooldownSeconds: 0
+    useCustomDamage: 0
+    baseDamage: 0
+    hitRange: 0
+    hitAreaMode: 0
+    hitHalfAngle: 75
+    projectile:
+      enabled: 0
+      releaseDelaySeconds: 0
+      visualPrefab: {fileID: 0}
+      speed: 0
+      lifetimeSeconds: 0
+      hitRadius: 0
+      spawnForward: 0
+      spawnOffset: {x: 0, y: 0, z: 0}
+      spawnSocketPath: 
+      useSocketRotationForDirection: 0
+    projectiles: []
+    vfxTimeline: []
+    bodyPartTimeline: []
+    audioTimeline: []
+  chainInputStartNormalized: 0.45
+  chainTransitionNormalized: 0.85
+  chainInputEndNormalized: 1
+  movementSteps:
+  - movement: {x: 0, y: 2}
+    startNormalized: 0
+    endNormalized: 0.4
+  forwardStepDistance: 1
+  stepStartNormalized: 0.17
+  stepEndNormalized: 0.33
+  hitRange: 1
+  projectile:
+    enabled: 0
+    releaseDelaySeconds: 0
+    visualPrefab: {fileID: 6367346281010251247, guid: 01a9e5d904f3c7d41ad90b9a964309e6, type: 3}
+    speed: 20
+    lifetimeSeconds: 1
+    hitRadius: 0.35
+    spawnForward: 0.8
+    spawnOffset: {x: 0, y: 1, z: 0}
+    spawnSocketPath: 
+    useSocketRotationForDirection: 0
+  projectiles:
+  - enabled: 1
+    releaseDelaySeconds: 0.3
+    visualPrefab: {fileID: 6367346281010251247, guid: 01a9e5d904f3c7d41ad90b9a964309e6, type: 3}
+    speed: 20
+    lifetimeSeconds: 1
+    hitRadius: 2
+    spawnForward: 0.8
+    spawnOffset: {x: 0, y: 1, z: 0}
+    spawnSocketPath: 
+    useSocketRotationForDirection: 0
+  vfxTimeline: []
+  audioTimeline:
+  - clip: {fileID: 8300000, guid: a8301a70a29d3a84dbcb3050016e2d38, type: 3}
+    startSeconds: 0
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    socketPath: 
+    localOffset: {x: 0, y: 0, z: 0}
+    followSocket: 0
+    scalePitchWithCombatTime: 0
+  - clip: {fileID: 8300000, guid: ca8b20dcc7e11864d992c7b4368cae8e, type: 3}
+    startSeconds: 0
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    socketPath: 
+    localOffset: {x: 0, y: 0, z: 0}
+    followSocket: 0
+    scalePitchWithCombatTime: 0
+  - clip: {fileID: 8300000, guid: a0bd22de17199004ab49b58c983c7b70, type: 3}
+    startSeconds: 0.784
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    socketPath: 
+    localOffset: {x: 0, y: 0, z: 0}
+    followSocket: 0
+    scalePitchWithCombatTime: 0
+  bodyPartTimeline: []
+  clockUpEnabled: 0
+  clockUpActivationDelaySeconds: 0
+  clockUpDurationSeconds: 5
+  clockUpOtherRiderScale: 0.1
+  clockUpCasterScale: 1
+  clockUpStartVfxPrefab: {fileID: 0}
+  clockUpActiveVfxPrefab: {fileID: 0}
+  clockUpEndVfxPrefab: {fileID: 0}
+  clockUpStartVfxSeconds: 0.7
+  clockUpEndVfxSeconds: 0.7
+  clockUpVfxOffset: {x: 0, y: 1, z: 0}
+  hookEnabled: 0
+  hookRange: 10
+  hookPullSpeed: 8
+  hookDurationSeconds: 1.5
+  hookStopDistance: 1.2
+  gravityPullEnabled: 0
+  gravityPullRadius: 6
+  gravityPullSpeed: 6
+  gravityPullDurationSeconds: 2
+  gravityPullStopDistance: 0.5
+  gravityPullCenterOffset: {x: 0, y: 0, z: 0}

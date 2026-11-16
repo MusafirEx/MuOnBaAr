@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MuOnBaArPrototype.unity
+    guid: 5b7f3274585cdd445b9b13b58b3522ec
   m_configObjects: {}

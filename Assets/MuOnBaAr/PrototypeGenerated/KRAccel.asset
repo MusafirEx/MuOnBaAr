@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 089dac15b6cb7d7f1f51ce8ae134af21, type: 3}
+  m_Name: KRAccel
+  m_EditorClassIdentifier: 
+  actorId: KRAccel
+  characterIcon: {fileID: -1798997393, guid: 27c5658744756ff41a9b85ffd1762ce7, type: 3}
+  maxLevel: 30
+  baseXpToNextLevel: 100
+  xpAwardForKnockout: 5
+  maxHealth: 100
+  maxEnergy: 100
+  moveSpeed: 10
+  startingFormIndex: 0
+  forms:
+  - {fileID: 11400000, guid: c201650fbf80478489c0a9a815c157ad, type: 2}
+  - {fileID: 11400000, guid: c0e1e6786c5b2244f8db0fbe5f0bd192, type: 2}
+  - {fileID: 11400000, guid: 7dfe41e66cdd1764185097b9df812a8f, type: 2}
