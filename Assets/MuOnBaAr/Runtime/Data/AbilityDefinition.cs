@@ -38,6 +38,11 @@ namespace MuOnBaAr.Runtime
         [Tooltip("Author optional absolute damage instead of multiplier.")]
         [SerializeField] private bool useCustomDamage;
         [SerializeField, Min(0)] private int customDamage = 10;
+        [Header("Charge Energy Gain Override (optional)")]
+        [Tooltip("When disabled, this threshold inherits the Ability Energy Gain On Hit. " +
+            "Enable to give stronger charge levels more Energy per hit.")]
+        [SerializeField] private bool useCustomEnergyGainOnHit;
+        [SerializeField, Min(0)] private int energyGainOnHit = 5;
         [Tooltip("Used only when Release Type is Melee.")]
         [SerializeField, Min(0.1f)] private float meleeRange = 2.75f;
         [Tooltip("Each enabled entry launches one separate projectile. Limited by the network projectile pool.")]
@@ -66,6 +71,9 @@ namespace MuOnBaAr.Runtime
         public int CalculateDamage(int baseDamage) => Mathf.Max(0,
             useCustomDamage ? customDamage :
                 Mathf.RoundToInt(Mathf.Max(0, baseDamage) * Mathf.Max(0f, damageMultiplier)));
+        public int ResolveEnergyGainOnHit(int abilityEnergyGain) =>
+            useCustomEnergyGainOnHit ? Mathf.Max(0, energyGainOnHit) :
+                Mathf.Max(0, abilityEnergyGain);
         public CombatProjectileSettings[] Projectiles => projectiles;
         public CombatProjectileSettings GetProjectile(int index)
         {
@@ -84,6 +92,10 @@ namespace MuOnBaAr.Runtime
         [SerializeField, Min(0f)] private float activeSeconds = 0.2f;
         [SerializeField, Min(0f)] private float recoverySeconds = 0.3f;
         [SerializeField, Min(0)] private int baseDamage = 10;
+        [Header("Energy Gain On Successful Hit")]
+        [Tooltip("Energy rewarded per successful enemy hit. Zero disables. " +
+            "Each Ability can use a different value; Combo Follow-Ups set theirs per stage.")]
+        [SerializeField, Min(0)] private int energyGainOnHit = 5;
         [Header("Hit Reaction Applied To Victim")]
         [SerializeField] private HitReactionType hitReaction = HitReactionType.Body;
         [Tooltip("Used only when Hit Reaction = Stun. Scaled CombatTime seconds.")]
@@ -183,6 +195,7 @@ namespace MuOnBaAr.Runtime
         public float ActiveSeconds => Mathf.Max(0f, activeSeconds);
         public float RecoverySeconds => Mathf.Max(0f, recoverySeconds);
         public int BaseDamage => Mathf.Max(0, baseDamage);
+        public int EnergyGainOnHit => Mathf.Max(0, energyGainOnHit);
         public HitReactionType HitReaction => hitReaction;
         public float StunDurationSeconds => Mathf.Max(0.05f, stunDurationSeconds);
         public float HitKnockbackDistance => Mathf.Max(0f, hitKnockbackDistance);

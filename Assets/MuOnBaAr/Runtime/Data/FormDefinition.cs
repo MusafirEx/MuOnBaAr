@@ -196,6 +196,10 @@ namespace MuOnBaAr.Runtime
         [Tooltip("Scaled CombatTime seconds over which the hit knockback is applied.")]
         [SerializeField, Min(0.05f)] private float hitKnockbackSeconds = 0.25f;
         [SerializeField, Min(0)] private int energyCost;
+        [Header("Energy Gain On Successful Hit (per Combo Stage)")]
+        [Tooltip("Energy awarded to the attacker for each enemy that actually loses HP. " +
+            "Set 0 to disable. Examples: Light=2, Medium=5, Heavy=10.")]
+        [SerializeField, Min(0)] private int energyGainOnHit = 5;
         [SerializeField, Min(0f)] private float cooldownSeconds;
         [SerializeField] private bool useCustomDamage;
         [SerializeField, Min(0)] private int baseDamage = 10;
@@ -237,6 +241,7 @@ namespace MuOnBaAr.Runtime
         public float ActiveSeconds => usePhaseDurations ? Mathf.Max(0f, activeSeconds) : DurationSeconds;
         public float RecoverySeconds => usePhaseDurations ? Mathf.Max(0f, recoverySeconds) : 0f;
         public int EnergyCost => Mathf.Max(0, energyCost);
+        public int EnergyGainOnHit => Mathf.Max(0, energyGainOnHit);
         public float CooldownSeconds => Mathf.Max(0f, cooldownSeconds);
         public bool UseCustomDamage => useCustomDamage;
         public int BaseDamage => Mathf.Max(0, baseDamage);
@@ -274,6 +279,10 @@ namespace MuOnBaAr.Runtime
         [SerializeField] private bool canFly;
         [Tooltip("Flying climb and descent speed, metres per CombatTime second.")]
         [SerializeField, Min(0.1f)] private float flySpeed = 4f;
+        [Tooltip("Horizontal flight acceleration in metres per second squared. Applies to WASD movement only during powered flight; does not change vertical climb or descent.")]
+        [SerializeField, Min(0.1f)] private float flyHorizontalAcceleration = 12f;
+        [Tooltip("Horizontal flight deceleration in metres per second squared when WASD is released, reversed, or speed is reduced. Vertical movement remains unchanged.")]
+        [SerializeField, Min(0.1f)] private float flyHorizontalDeceleration = 8f;
         [Tooltip("Absolute world-space Y ceiling for powered flight, measured from Unity Y=0 (not from takeoff ground). 10 means maximum flight Y=10 regardless of launch point.")]
         [SerializeField, Min(0f)] private float maxFlyHeight = 10f;
         [Tooltip("Hold Space for this many scaled CombatTime seconds to switch from normal jump to flight.")]
@@ -289,6 +298,15 @@ namespace MuOnBaAr.Runtime
         [Tooltip("Duration of FormChangeEnd when transforming INTO this Form." +
             " Scaled CombatTime seconds. Default matches ACL00 clip.")]
         [SerializeField, Min(0.05f)] private float formChangeEndSeconds = 2.483333f;
+        [Header("Form Change VFX Timeline (Per Form)")]
+        [Tooltip("OUTGOING Form: local cosmetic VFX during FormChangeStart. " +
+            "Start Seconds are relative to the beginning of the Start animation.")]
+        [SerializeField] private CombatVfxCue[] formChangeStartVfxTimeline =
+            Array.Empty<CombatVfxCue>();
+        [Tooltip("INCOMING Form: local cosmetic VFX during FormChangeEnd, " +
+            "after the new Form visual is spawned. Time is relative to End.")]
+        [SerializeField] private CombatVfxCue[] formChangeEndVfxTimeline =
+            Array.Empty<CombatVfxCue>();
         [Header("Form Change Body Part Visibility (Per Form)")]
         [Tooltip("OUTGOING Form: timed mesh hide/show events during FormChangeStart." +
             " TimeSeconds is measured from Start animation beginning.")]
@@ -319,6 +337,8 @@ namespace MuOnBaAr.Runtime
         public float JumpHeight => Mathf.Max(0f, jumpHeight);
         public bool CanFly => canFly;
         public float FlySpeed => Mathf.Max(0.1f, flySpeed);
+        public float FlyHorizontalAcceleration => Mathf.Max(0.1f, flyHorizontalAcceleration);
+        public float FlyHorizontalDeceleration => Mathf.Max(0.1f, flyHorizontalDeceleration);
         public float MaxFlyHeight => Mathf.Max(0f, maxFlyHeight);
         public float FlyHoldSeconds => Mathf.Max(0.05f, flyHoldSeconds);
         public float FlyEnergyPerSecond => Mathf.Max(0.1f, flyEnergyPerSecond);
@@ -326,6 +346,10 @@ namespace MuOnBaAr.Runtime
         public float ChangeLockSeconds => Mathf.Max(0f, changeLockSeconds);
         public float FormChangeStartSeconds => Mathf.Max(0.05f, formChangeStartSeconds);
         public float FormChangeEndSeconds => Mathf.Max(0.05f, formChangeEndSeconds);
+        public CombatVfxCue[] FormChangeStartVfxTimeline =>
+            formChangeStartVfxTimeline;
+        public CombatVfxCue[] FormChangeEndVfxTimeline =>
+            formChangeEndVfxTimeline;
         public BodyPartVisibilityCue[] FormChangeStartBodyPartTimeline =>
             formChangeStartBodyPartTimeline;
         public BodyPartVisibilityCue[] FormChangeEndBodyPartTimeline =>
@@ -423,6 +447,8 @@ namespace MuOnBaAr.Runtime
             damageMultiplier = Mathf.Max(0.1f, damageMultiplier);
             jumpHeight = Mathf.Max(0f, jumpHeight);
             flySpeed = Mathf.Max(0.1f, flySpeed);
+            flyHorizontalAcceleration = Mathf.Max(0.1f, flyHorizontalAcceleration);
+            flyHorizontalDeceleration = Mathf.Max(0.1f, flyHorizontalDeceleration);
             maxFlyHeight = Mathf.Max(0f, maxFlyHeight);
             flyHoldSeconds = Mathf.Max(0.05f, flyHoldSeconds);
             flyEnergyPerSecond = Mathf.Max(0.1f, flyEnergyPerSecond);

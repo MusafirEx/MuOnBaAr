@@ -19,7 +19,8 @@ MonoBehaviour:
   activeSeconds: 0.28
   recoverySeconds: 1.217
   baseDamage: 10
-  hitReaction: 7
+  energyGainOnHit: 5
+  hitReaction: 2
   stunDurationSeconds: 5
   hitKnockbackDistance: 2
   hitKnockbackSeconds: 0.25
@@ -39,6 +40,8 @@ MonoBehaviour:
     damageMultiplier: 0
     useCustomDamage: 0
     customDamage: 0
+    useCustomEnergyGainOnHit: 0
+    energyGainOnHit: 5
     meleeRange: 0
     projectiles: []
     movementSteps: []
@@ -64,6 +67,7 @@ MonoBehaviour:
     hitKnockbackDistance: 0
     hitKnockbackSeconds: 0.25
     energyCost: 0
+    energyGainOnHit: 5
     cooldownSeconds: 0
     useCustomDamage: 0
     baseDamage: 0

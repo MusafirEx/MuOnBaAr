@@ -55,6 +55,8 @@ namespace MuOnBaAr.Networking
                 PruneUnused();
                 return;
             }
+            WarmTimeline(form.FormChangeStartVfxTimeline);
+            WarmTimeline(form.FormChangeEndVfxTimeline);
             if (form.Abilities != null)
                 foreach (AbilityDefinition a in form.Abilities)
                     if (a != null)
@@ -281,6 +283,9 @@ namespace MuOnBaAr.Networking
             foreach (FormDefinition form in forms.Values)
             {
                 if (form == null) continue;
+                if (TimelineUsesPrefab(form.FormChangeStartVfxTimeline, prefab) ||
+                    TimelineUsesPrefab(form.FormChangeEndVfxTimeline, prefab))
+                    return true;
                 if (form.Abilities != null)
                     foreach (AbilityDefinition a in form.Abilities)
                         if (a != null && UsesProjectile(a.Projectile, a.Projectiles, prefab))

@@ -12,9 +12,13 @@ namespace MuOnBaAr.Editor
     internal static class ACL00LocomotionLoopInstaller
     {
         private const string MotionSource =
-            "Assets/chr/ACL/ACL00/motion/0000.pemt";
+            "Assets/Model/chr/ACL/ACL00/motion/0000.pemt";
 
         // PEMT clip names are hex ("0000_Motion_100"), not decimal IDs.
+        private const string FlyMotionSource =
+            "Assets/Model/chr/ACL/ACL02/motion/0000.pemt";
+        private const int FlyforwardMotionId = 0x13B;
+
         private static readonly int[] LoopMotionIds =
         {
             0x100, // Idle
@@ -41,6 +45,10 @@ namespace MuOnBaAr.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode ||
                 EditorApplication.isCompiling || EditorApplication.isUpdating)
                 return;
+
+            // The flight clip is stored in ACL02, not in ACL00's PEMT.
+            // Reimport only if its explicit per-motion Loop Time override differs.
+            ApplyFlyforwardLoopIfNeeded();
 
             AssetImporter importer = AssetImporter.GetAtPath(MotionSource);
             if (importer == null)
@@ -149,6 +157,91 @@ namespace MuOnBaAr.Editor
                 "0x100 Idle, 0x105 Walk, 0x103 Run, 0x106 Sprint. " +
                 "Imported clips found: " + found + "/4. " +
                 "Other PEMT motions and Animator transitions unchanged.");
+        }
+
+        // ACL02's motion 0x13B is the continuous Flyforward movement clip.
+        // Keep all other ACL02 motions and importer settings unchanged.
+        private static void ApplyFlyforwardLoopIfNeeded()
+        {
+            AssetImporter importer = AssetImporter.GetAtPath(FlyMotionSource);
+            if (importer == null)
+            {
+                Debug.LogWarning("[MuOnBaAr][Flyforward] PEMT not found: " +
+                    FlyMotionSource + "; no flight loop changes applied.");
+                return;
+            }
+            if (importer.GetType().Name != "PemtImporter")
+            {
+                Debug.LogWarning("[MuOnBaAr][Flyforward] Unexpected importer: " +
+                    importer.GetType().FullName + "; no changes applied.");
+                return;
+            }
+
+            SerializedObject data = new SerializedObject(importer);
+            SerializedProperty overrides = data.FindProperty("motionLoopOverrides");
+            if (overrides == null || !overrides.isArray)
+            {
+                Debug.LogError("[MuOnBaAr][Flyforward] The PEMT importer does not expose " +
+                    "motionLoopOverrides; no changes applied.");
+                return;
+            }
+
+            int index = -1;
+            for (int i = 0; i < overrides.arraySize; i++)
+            {
+                SerializedProperty candidate = overrides.GetArrayElementAtIndex(i);
+                SerializedProperty motionId = candidate.FindPropertyRelative("motionId");
+                if (motionId != null && motionId.intValue == FlyforwardMotionId)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            // Validate fields before editing, including when the array is empty.
+            bool newlyAdded = index < 0;
+            if (newlyAdded)
+            {
+                index = overrides.arraySize;
+                overrides.InsertArrayElementAtIndex(index);
+            }
+            SerializedProperty entry = overrides.GetArrayElementAtIndex(index);
+            SerializedProperty id = entry.FindPropertyRelative("motionId");
+            SerializedProperty loopTime = entry.FindPropertyRelative("loopTime");
+            SerializedProperty loopPose = entry.FindPropertyRelative("loopPose");
+            if (id == null || loopTime == null || loopPose == null)
+            {
+                Debug.LogError("[MuOnBaAr][Flyforward] Unexpected motion loop entry; " +
+                    "no changes applied.");
+                return;
+            }
+
+            bool changed = newlyAdded || id.intValue != FlyforwardMotionId ||
+                !loopTime.boolValue || loopPose.boolValue;
+            if (changed)
+            {
+                id.intValue = FlyforwardMotionId;
+                loopTime.boolValue = true;
+                loopPose.boolValue = false;
+                data.ApplyModifiedPropertiesWithoutUndo();
+                importer.SaveAndReimport();
+            }
+
+            // Verify the resulting imported clip, not just importer serialized settings.
+            foreach (Object asset in AssetDatabase.LoadAllAssetsAtPath(FlyMotionSource))
+            {
+                AnimationClip clip = asset as AnimationClip;
+                if (clip == null || clip.name != "0000_Motion_13B") continue;
+                if (!AnimationUtility.GetAnimationClipSettings(clip).loopTime)
+                    Debug.LogWarning("[MuOnBaAr][Flyforward] Override exists but " +
+                        "0000_Motion_13B is still not looping after import.");
+                else if (changed)
+                    Debug.Log("[MuOnBaAr][Flyforward] Loop Time enabled for " +
+                        "0000_Motion_13B (ACL02 PEMT); Loop Pose remains disabled.");
+                return;
+            }
+            Debug.LogWarning("[MuOnBaAr][Flyforward] Imported clip 0000_Motion_13B " +
+                "not found in ACL02 PEMT; verify the importer's generated subassets.");
         }
     }
 }

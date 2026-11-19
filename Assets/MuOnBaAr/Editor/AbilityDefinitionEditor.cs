@@ -39,6 +39,7 @@ namespace MuOnBaAr.Editor
             Draw("activeSeconds");
             Draw("recoverySeconds");
             Draw("baseDamage");
+            Draw("energyGainOnHit");
             EditorGUILayout.LabelField("Hit Reaction Applied To Victim", EditorStyles.boldLabel);
             Draw("hitReaction");
             SerializedProperty reaction = serializedObject.FindProperty("hitReaction");

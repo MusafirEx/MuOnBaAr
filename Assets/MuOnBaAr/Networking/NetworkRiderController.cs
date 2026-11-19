@@ -20,6 +20,7 @@ namespace MuOnBaAr.Networking
         public Vector3 Velocity;
         public float HitRadius;
         public int Damage;
+        public int EnergyGainOnHit;
         public int HitReaction;
         public float StunDurationSeconds;
         public float KnockbackDistance;
@@ -39,6 +40,7 @@ namespace MuOnBaAr.Networking
         public int ChargeThresholdIndex;
         public int ProjectileIndex;
         public int Damage;
+        public int EnergyGainOnHit;
         public int HitReaction;
         public float StunDurationSeconds;
         public float KnockbackDistance;
@@ -87,6 +89,8 @@ namespace MuOnBaAr.Networking
         private RiderWorldHealthBar worldHealthBar;
         private SimpleKCC simpleKCC;
         private int nextKCCDiagnosticTick;
+        // Non-networked predicted X/Z momentum, active only in powered flight.
+        private Vector3 flyingHorizontalVelocity;
         private float localAnimatorSpeedNormalized;
         private RiderThirdPersonCamera localCamera;
         private NetworkRiderController localLockedTarget;
@@ -225,6 +229,7 @@ namespace MuOnBaAr.Networking
         [Networked] private NetworkBool PendingImpactArmed { get; set; }
         [Networked] private float PendingImpactCombatTime { get; set; }
         [Networked] private int PendingImpactDamage { get; set; }
+        [Networked] private int PendingImpactEnergyGain { get; set; }
         [Networked] private int PendingImpactHitReaction { get; set; }
         [Networked] private int PendingImpactHitAreaMode { get; set; }
         [Networked] private float PendingImpactHitHalfAngle { get; set; }
@@ -374,6 +379,16 @@ namespace MuOnBaAr.Networking
             new System.Collections.Generic.List<GameObject>();
         private readonly System.Collections.Generic.List<float> timedActionVisualEnds =
             new System.Collections.Generic.List<float>();
+        // Cosmetic Form Change effects are played on all peers, independently
+        // of state-authoritative gameplay, from replicated phase + CombatTime.
+        private int observedFormVfxSequence = -1;
+        private int observedFormVfxPhase = -1;
+        private readonly System.Collections.Generic.HashSet<int> firedFormVfxCues =
+            new System.Collections.Generic.HashSet<int>();
+        private readonly System.Collections.Generic.List<GameObject> activeFormVfx =
+            new System.Collections.Generic.List<GameObject>();
+        private readonly System.Collections.Generic.List<float> activeFormVfxEnds =
+            new System.Collections.Generic.List<float>();
         [Networked] public float CurrentSkillDuration { get; private set; }
         private int displayedFormIndex = -1;
 
@@ -469,6 +484,7 @@ namespace MuOnBaAr.Networking
                 NextComboCombatTime = 0f;
                 NextSkill0CombatTime = NextSkill1CombatTime = NextSkill2CombatTime = 0f;
                 PendingImpactArmed = false;
+                PendingImpactEnergyGain = 0;
                 PendingImpactHitReaction = (int)HitReactionType.None;
                 PendingImpactStunSeconds = 0f;
                 StunEndCombatTime = 0f;
@@ -577,6 +593,8 @@ namespace MuOnBaAr.Networking
             observedSkillSequence = SkillSequence;
             observedFormTransitionSequence = FormTransitionSequence;
             observedFormTransitionPhase = FormTransitionPhase;
+            observedFormVfxSequence = -1;
+            observedFormVfxPhase = -1;
             observedChargeSequence = ChargeSequence;
             chargeLoopPlaying = false;
             observedComboAudioSequence = AttackSequence;
@@ -651,6 +669,7 @@ namespace MuOnBaAr.Networking
             // KO countdown is authoritative even when a client's input is missing.
             if (Health <= 0)
             {
+                flyingHorizontalVelocity = Vector3.zero;
                 localAnimatorSpeedNormalized = 0f;
                 if (Object.HasStateAuthority)
                     ReplicatedAnimatorSpeedNormalized = 0f;
@@ -678,6 +697,7 @@ namespace MuOnBaAr.Networking
                 // A missing packet cannot fake a button release.
                 if (Object.HasStateAuthority)
                     ProcessCharge(true, new Vector2(transform.forward.x, transform.forward.z));
+                flyingHorizontalVelocity = Vector3.zero;
                 localAnimatorSpeedNormalized = 0f;
                 if (Object.HasStateAuthority)
                     ReplicatedAnimatorSpeedNormalized = 0f;
@@ -760,10 +780,43 @@ namespace MuOnBaAr.Networking
                     jumpPressed && !actionLocked && Object.HasStateAuthority,
                     input.Buttons.IsSet(RiderInputButton.JumpHeld) && !actionLocked,
                     input.Buttons.IsSet(RiderInputButton.FlyDescendHeld) && !actionLocked);
-                // Animation and gameplay cannot use locomotion while attacking.
+                // Smooth only powered-flight X/Z momentum. The Y speed,
+                // gravity, ceiling, Space/Alt controls and regular jump
+                // behaviour remain unchanged in AdvanceAirborne().
+                Vector3 horizontalVelocity = direction * speed;
+                bool smoothFlying = FlightActive && !simpleKCC.IsGrounded &&
+                    !actionLocked && locomotionTimeScale > 0f;
+                if (smoothFlying)
+                {
+                    bool braking = direction.sqrMagnitude < 0.0001f ||
+                        horizontalVelocity.sqrMagnitude + 0.0001f <
+                            flyingHorizontalVelocity.sqrMagnitude ||
+                        Vector3.Dot(horizontalVelocity, flyingHorizontalVelocity) < 0f;
+                    float acceleration = braking
+                        ? currentForm.FlyHorizontalDeceleration
+                        : currentForm.FlyHorizontalAcceleration;
+                    flyingHorizontalVelocity = Vector3.MoveTowards(
+                        flyingHorizontalVelocity, horizontalVelocity,
+                        acceleration * Runner.DeltaTime * locomotionTimeScale);
+                    horizontalVelocity = flyingHorizontalVelocity;
+                }
+                else
+                {
+                    // No stale air momentum across landing, movement locks,
+                    // form changes, or a stopped gameplay clock.
+                    flyingHorizontalVelocity = Vector3.zero;
+                }
+
+                // Flyforward stays active while decelerating, and Float is
+                // reached only when real planar momentum has almost stopped.
+                float normalizedHorizontal = smoothFlying
+                    ? flyingHorizontalVelocity.magnitude /
+                        Mathf.Max(0.01f, actor.MoveSpeed *
+                            currentForm.MovementMultiplier * locomotionTimeScale)
+                    : move.magnitude *
+                        RiderLocomotionRules.MovementSpeedMultiplier(sprintHeld);
                 localAnimatorSpeedNormalized = actionLocked ? 0f :
-                    Mathf.Clamp(move.magnitude *
-                        RiderLocomotionRules.MovementSpeedMultiplier(sprintHeld), 0f, 1.5f);
+                    Mathf.Clamp(normalizedHorizontal, 0f, 1.5f);
                 if (Object.HasStateAuthority)
                     ReplicatedAnimatorSpeedNormalized = localAnimatorSpeedNormalized;
 
@@ -830,7 +883,7 @@ namespace MuOnBaAr.Networking
                         verticalVelocity);
                 }
                 else
-                    simpleKCC.Move(direction * speed + externalPull +
+                    simpleKCC.Move(horizontalVelocity + externalPull +
                         verticalVelocity);
 
                 // Diagnostic every ~1 second at 60Hz when movement is requested.
@@ -1621,6 +1674,8 @@ namespace MuOnBaAr.Networking
             if (Health > 0) UpdateAirborneAnimation();
             UpdateProjectileVisual();
             UpdateClockUpVfx();
+            // Must also run on KO and transition cancellation to release VFX.
+            UpdateFormChangeVfxTimeline();
             if (Health > 0)
             {
                 UpdateActionVfxTimelines();
@@ -1728,6 +1783,7 @@ namespace MuOnBaAr.Networking
 
         private void OnDestroy()
         {
+            ReleaseFormChangeVfx();
             if (projectilePool != null)
             {
                 for (int i = 0; i < ProjectileCapacity; ++i)
@@ -1934,7 +1990,9 @@ namespace MuOnBaAr.Networking
                 float meleeRange = threshold != null ? threshold.MeleeRange : ability.HitRange;
                 ScheduleImpact(ability.StartupSeconds, damage, meleeRange,
                     threshold != null && threshold.ReleaseType == ChargeReleaseType.Projectiles,
-                    true, slot);
+                    true, slot, threshold != null
+                        ? threshold.ResolveEnergyGainOnHit(ability.EnergyGainOnHit)
+                        : ability.EnergyGainOnHit);
                 PendingChargeThresholdIndex = ReleasedChargeThresholdIndex;
             }
             else if (ability.NormalReleaseImplemented &&
@@ -1944,7 +2002,8 @@ namespace MuOnBaAr.Networking
                        ability.NormalReleaseType != NormalAbilityReleaseType.AutoLegacy))
                 ScheduleImpact(ability.StartupSeconds,
                     Mathf.Max(0, Mathf.RoundToInt(ability.BaseDamage * multiplier)),
-                    ability.HitRange, ability.UsesNormalProjectile, true, slot);
+                    ability.HitRange, ability.UsesNormalProjectile, true, slot,
+                    ability.EnergyGainOnHit);
             LogCombat("SKILL", "slot=" + slot + " ability=" + ability.AbilityId +
                 " energy=" + Energy + " hitTick=" + PendingImpactTick);
         }
@@ -2103,7 +2162,7 @@ namespace MuOnBaAr.Networking
             int damage = stage.UseCustomDamage ? stage.BaseDamage : ability.BaseDamage;
             bool projectile = stage.HasEnabledProjectiles;
             ScheduleImpact(stage.StartupSeconds, damage, stage.HitRange,
-                projectile, true, SkillIndex);
+                projectile, true, SkillIndex, stage.EnergyGainOnHit);
             LogCombat("SKILL_COMBO_CHAIN", "slot=" + SkillIndex +
                 " stage=" + SkillComboStage + " energy=" + Energy);
         }
@@ -2403,14 +2462,15 @@ namespace MuOnBaAr.Networking
             float range = combo != null ? combo.HitRange : attackRange;
             bool projectile = combo != null && combo.HasEnabledProjectiles;
             float startup = combo != null ? combo.StartupSeconds : 0f;
-            ScheduleImpact(startup, damage, range, projectile, false, stageIndex);
+            ScheduleImpact(startup, damage, range, projectile, false, stageIndex,
+                combo != null ? combo.EnergyGainOnHit : 0);
             LogCombat(chained ? "COMBO_CHAIN" : "ATTACK",
                 "stage=" + stageIndex + " sequence=" + AttackSequence +
                 " energy=" + Energy);
         }
 
         private void ScheduleImpact(float startupSeconds, int damage, float range,
-            bool projectile, bool skill, int slot)
+            bool projectile, bool skill, int slot, int energyGainOnHit)
         {
             // Both projectile and melee release follow the same CombatTime
             // used by their animations, including slow motion and 0x freeze.
@@ -2419,6 +2479,9 @@ namespace MuOnBaAr.Networking
             PendingImpactTick = Runner.Tick.Raw + 1;
             PendingImpactArmed = true;
             PendingImpactDamage = Mathf.Max(0, damage);
+            // Snapshot the authored reward at attack start. Combo buffering,
+            // changing Form or delayed projectiles cannot alter this hit's gain.
+            PendingImpactEnergyGain = Mathf.Max(0, energyGainOnHit);
             PendingImpactHitReaction = (int)ResolveCurrentAttackHitReaction(skill, slot);
             // Snapshot authoring at action start, not when the hit resolves:
             // combo buffering can otherwise change which hit cone is applied.
@@ -2464,13 +2527,13 @@ namespace MuOnBaAr.Networking
                     DealMeleeDamage(PendingImpactDamage, PendingImpactRange,
                         (HitReactionType)PendingImpactHitReaction,
                         PendingImpactKnockbackDistance, PendingImpactKnockbackSeconds,
-                        PendingImpactStunSeconds);
+                        PendingImpactStunSeconds, PendingImpactEnergyGain);
                 }
                 else if (threshold.ReleaseType == ChargeReleaseType.Melee)
                     DealMeleeDamage(PendingImpactDamage, threshold.MeleeRange,
                         threshold.HitReaction, threshold.HitKnockbackDistance,
                         threshold.HitKnockbackSeconds,
-                        threshold.StunDurationSeconds);
+                        threshold.StunDurationSeconds, PendingImpactEnergyGain);
                 else if (threshold.ReleaseType == ChargeReleaseType.Projectiles)
                 {
                     ReleaseProjectileBurst(PendingChargeThresholdIndex);
@@ -2488,7 +2551,7 @@ namespace MuOnBaAr.Networking
                 DealMeleeDamage(PendingImpactDamage, PendingImpactRange,
                     (HitReactionType)PendingImpactHitReaction,
                     PendingImpactKnockbackDistance, PendingImpactKnockbackSeconds,
-                    PendingImpactStunSeconds,
+                    PendingImpactStunSeconds, PendingImpactEnergyGain,
                     !PendingImpactSkill && PendingImpactHitAreaMode ==
                         (int)ComboHitAreaMode.FullCircle360,
                     !PendingImpactSkill ? PendingImpactHitHalfAngle : attackHalfAngle);
@@ -2496,7 +2559,7 @@ namespace MuOnBaAr.Networking
 
         private void DealMeleeDamage(int baseDamage, float range,
             HitReactionType hitReaction, float knockbackDistance,
-            float knockbackSeconds, float stunSeconds,
+            float knockbackSeconds, float stunSeconds, int energyGainOnHit,
             bool fullCircle = false, float customHalfAngle = -1f)
         {
             Vector2 aim = RiderCombatRules.PlanarForward(transform.rotation);
@@ -2518,7 +2581,8 @@ namespace MuOnBaAr.Networking
                     if (sq > range * range) continue;
                     // Spinning melee is radial AOE: each valid rider takes one hit.
                     ApplyDamage(other, baseDamage, hitReaction,
-                        knockbackDistance, knockbackSeconds, stunSeconds);
+                        knockbackDistance, knockbackSeconds, stunSeconds,
+                        energyGainOnHit);
                     continue;
                 }
                 if (!RiderCombatRules.IsInMeleeArc(transform.position,
@@ -2530,7 +2594,8 @@ namespace MuOnBaAr.Networking
             }
             if (!fullCircle && best != null)
                 ApplyDamage(best, baseDamage, hitReaction,
-                    knockbackDistance, knockbackSeconds, stunSeconds);
+                    knockbackDistance, knockbackSeconds, stunSeconds,
+                    energyGainOnHit);
         }
 
         // XP is awarded only by the authoritative HOST on an actual KO.
@@ -2552,7 +2617,7 @@ namespace MuOnBaAr.Networking
 
         private void ApplyDamage(NetworkRiderController target, int baseDamage,
             HitReactionType hitReaction, float knockbackDistance,
-            float knockbackSeconds, float stunSeconds)
+            float knockbackSeconds, float stunSeconds, int energyGainOnHit)
         {
             if (!Object.HasStateAuthority || baseDamage <= 0 || !IsLiveOpponent(target) ||
                 !target.Object.HasStateAuthority ||
@@ -2570,7 +2635,7 @@ namespace MuOnBaAr.Networking
             int actualDamage = before - target.Health;
             int energyBefore = Energy;
             Energy = RiderCombatRules.RestoreEnergyOnSuccessfulHit(
-                Energy, actor.MaxEnergy, actor.EnergyGainOnHit, actualDamage);
+                Energy, actor.MaxEnergy, energyGainOnHit, actualDamage);
             if (Energy > energyBefore)
                 LogCombat("ENERGY_ON_HIT", "target=" + target.Object.Id +
                     " gained=" + (Energy - energyBefore) + " energy=" + Energy +
@@ -2862,6 +2927,7 @@ namespace MuOnBaAr.Networking
                 ChargeThresholdIndex = chargeThresholdIndex,
                 ProjectileIndex = projectileIndex,
                 Damage = PendingImpactDamage,
+                EnergyGainOnHit = PendingImpactEnergyGain,
                 HitReaction = PendingImpactHitReaction,
                 StunDurationSeconds = PendingImpactStunSeconds,
                 KnockbackDistance = PendingImpactKnockbackDistance,
@@ -2972,6 +3038,7 @@ namespace MuOnBaAr.Networking
                 Velocity = direction * settings.Speed,
                 HitRadius = settings.HitRadius,
                 Damage = request.Damage,
+                EnergyGainOnHit = request.EnergyGainOnHit,
                 HitReaction = request.HitReaction,
                 KnockbackDistance = request.KnockbackDistance,
                 KnockbackSeconds = request.KnockbackSeconds,
@@ -3044,7 +3111,7 @@ namespace MuOnBaAr.Networking
                     ApplyDamage(target, shot.Damage,
                         (HitReactionType)shot.HitReaction,
                         shot.KnockbackDistance, shot.KnockbackSeconds,
-                        shot.StunDurationSeconds);
+                        shot.StunDurationSeconds, shot.EnergyGainOnHit);
                     shot.Active = false;
                 }
                 else if (nearestWall < float.PositiveInfinity)
@@ -3183,6 +3250,80 @@ namespace MuOnBaAr.Networking
                     formBodyDesiredStates[idx] = cue.Active;
                 }
             }
+        }
+
+        // Start cues belong to the outgoing Form; End cues to the incoming one.
+        // All peers use replicated FormTransitionSequence, Phase and CombatTime.
+        private void UpdateFormChangeVfxTimeline()
+        {
+            int phase = FormTransitionPhase;
+            int sequence = FormTransitionSequence;
+            if (Health <= 0 || phase == 0 || actor == null ||
+                !actor.TryGetForm(CurrentFormIndex, out var form))
+            {
+                ReleaseFormChangeVfx();
+                observedFormVfxSequence = sequence;
+                observedFormVfxPhase = phase;
+                return;
+            }
+            if (observedFormVfxSequence != sequence ||
+                observedFormVfxPhase != phase)
+            {
+                ReleaseFormChangeVfx();
+                observedFormVfxSequence = sequence;
+                observedFormVfxPhase = phase;
+            }
+            if (projectilePool == null)
+                projectilePool = ProjectilePoolManager.FindOrCreate();
+            if (projectilePool == null) return;
+            for (int i = activeFormVfx.Count - 1; i >= 0; --i)
+            {
+                GameObject effect = activeFormVfx[i];
+                if (effect != null && CombatTime < activeFormVfxEnds[i])
+                    continue;
+                if (effect != null) projectilePool.Release(effect);
+                activeFormVfx.RemoveAt(i);
+                activeFormVfxEnds.RemoveAt(i);
+            }
+            CombatVfxCue[] timeline = phase == 1
+                ? form.FormChangeStartVfxTimeline
+                : form.FormChangeEndVfxTimeline;
+            if (timeline == null) return;
+            float elapsed = Mathf.Max(0f, CombatTime - FormTransitionPhaseStartTime);
+            for (int i = 0; i < timeline.Length; ++i)
+            {
+                CombatVfxCue cue = timeline[i];
+                if (cue == null || firedFormVfxCues.Contains(i) ||
+                    !FormChangeVfxRules.IsCueDue(elapsed, cue.StartSeconds))
+                    continue;
+                firedFormVfxCues.Add(i);
+                // A joining or delayed proxy skips already-expired effects.
+                float remaining = FormChangeVfxRules.RemainingSeconds(
+                    elapsed, cue.StartSeconds, cue.DurationSeconds);
+                if (remaining <= 0f || cue.Prefab == null) continue;
+                Transform anchor = transform;
+                if (!string.IsNullOrWhiteSpace(cue.SocketPath))
+                {
+                    Transform socket = FindProjectileSpawnSocket(cue.SocketPath);
+                    if (socket != null) anchor = socket;
+                }
+                GameObject effectPrefab = projectilePool.RentVfx(
+                    cue.Prefab, anchor, cue.LocalOffset, cue.FollowSocket);
+                if (effectPrefab == null) continue;
+                activeFormVfx.Add(effectPrefab);
+                activeFormVfxEnds.Add(CombatTime + remaining);
+            }
+        }
+
+        // Release before the outgoing Form mesh/bones are destroyed.
+        private void ReleaseFormChangeVfx()
+        {
+            if (projectilePool != null)
+                foreach (GameObject effect in activeFormVfx)
+                    if (effect != null) projectilePool.Release(effect);
+            activeFormVfx.Clear();
+            activeFormVfxEnds.Clear();
+            firedFormVfxCues.Clear();
         }
 
         // Local cosmetic AudioSources are driven by HOST-replicated action sequence
@@ -3760,6 +3901,8 @@ namespace MuOnBaAr.Networking
                 return;
 
             displayedFormIndex = CurrentFormIndex;
+            // Return outgoing Form Change effects before destroying its bones.
+            ReleaseFormChangeVfx();
             // Prevent old Form's socket-anchored VFX from following destroyed bones.
             for (int i = timedActionVisuals.Count - 1; i >= 0; --i)
                 if (projectilePool != null) projectilePool.Release(timedActionVisuals[i]);
